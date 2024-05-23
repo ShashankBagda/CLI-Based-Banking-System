@@ -10,6 +10,7 @@ public class BankServer {
     public static final String ANSI_BLUE = "\u001B[34m";
 
     public static void main(String[] args) throws Exception {
+        @SuppressWarnings("resource")
         ServerSocket server = new ServerSocket(12345);
         System.out.println(ANSI_PURPLE + "This is Banking Server" + ANSI_RESET);
 
