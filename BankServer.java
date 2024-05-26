@@ -10,7 +10,7 @@ public class BankServer {
     public static final String ANSI_PURPLE = "\033[1;95m";
     public static final String ANSI_BLUE = "\u001B[34m";
 
-    private static int accountNumberCounter = 1000000000; // Initial account number
+    private static int accountNumberCounter;
 
     public static void main(String[] args) {
         try {
@@ -23,7 +23,32 @@ public class BankServer {
                 handleClient(connectionSocket);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("");
+        }
+    }
+
+    private static void ensureCustomersDirectory() {
+        File dir = new File("Customers");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        } else {
+            File[] files = dir.listFiles();
+            int maxAccountNumber = 0;
+            if (files != null) {
+                for (File file : files) {
+                    String fileName = file.getName();
+                    if (fileName.endsWith(".txt")) {
+                        // Extract the account number from the file name
+                        String accountNumberStr = fileName.substring(0, fileName.length() - 4); // Remove ".txt" extension
+                        int accountNumber = Integer.parseInt(accountNumberStr);
+                        if (accountNumber > maxAccountNumber) {
+                            maxAccountNumber = accountNumber;
+                        }
+                    }
+                }
+            }
+            // Set the account number counter to the next available number
+            accountNumberCounter = maxAccountNumber + 1;
         }
     }
 
@@ -45,16 +70,16 @@ public class BankServer {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("");
         }
     }
 
-    private static void ensureCustomersDirectory() {
-        File dir = new File("Customers");
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-    }
+    // private static void ensureCustomersDirectory() {
+    //     File dir = new File("Customers");
+    //     if (!dir.exists()) {
+    //         dir.mkdirs();
+    //     }
+    // }
 
     private static void handleAdmin(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeUTF(ANSI_BLUE + "Admin Options:\n1. Search Customer\n2. Create New Account\nChoose an option (1/2):" + ANSI_RESET);
@@ -74,23 +99,33 @@ public class BankServer {
     private static void searchCustomer(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeUTF(ANSI_BLUE + "Enter Bank Account number:" + ANSI_RESET);
         dataOutputStream.flush();
-        String accountNumber = dataInputStream.readUTF();
-
-        File accountFile = new File("Customers/" + accountNumber + ".txt");
-        if (accountFile.exists()) {
-            StringBuilder accountInfo = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new FileReader(accountFile))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    accountInfo.append(line).append("\n");
+        
+        try {
+            String accountNumber = dataInputStream.readUTF();
+            File accountFile = new File("Customers/" + accountNumber + ".txt");
+            if (accountFile.exists()) {
+                StringBuilder accountInfo = new StringBuilder();
+                try (BufferedReader reader = new BufferedReader(new FileReader(accountFile))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        accountInfo.append(line).append("\n");
+                    }
                 }
-            }
 
-            dataOutputStream.writeUTF(ANSI_GREEN + "Account Information:\n" + accountInfo.toString() + ANSI_RESET);
-        } else {
-            dataOutputStream.writeUTF(ANSI_RED + "Bank Account not found: " + accountNumber + ANSI_RESET);
+                dataOutputStream.writeUTF(ANSI_GREEN + "Account Information:\n" + accountInfo.toString() + ANSI_RESET);
+            } else {
+                dataOutputStream.writeUTF(ANSI_RED + "Bank Account not found: " + accountNumber + ANSI_RESET);
+            }
+            dataOutputStream.flush();
+            // Other reading operations
+        } catch (EOFException e) {
+            System.out.println("");
+            // e.printStackTrace();
+            // Handle the exception or provide appropriate feedback to the user
         }
-        dataOutputStream.flush();
+        
+
+        
     }
 
     private static void createNewAccount(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
@@ -247,7 +282,7 @@ public class BankServer {
 
                 double receiverBalance = getBalance(receiverAccountNumber);
                 double newReceiverBalance = receiverBalance + transferAmount;
-                updateBalance(receiverAccountNumber, newReceiverBalance, "Received " + transferAmount + " from " + accountNumber);
+                updateBalance(receiverAccountNumber, newReceiverBalance, "Received " + transferAmount + " from Account Number : " + accountNumber);
 
                 dataOutputStream.writeUTF(ANSI_GREEN + "Amount transferred successfully. New Balance: " + newSenderBalance + ANSI_RESET);
             } else {

@@ -145,9 +145,9 @@ public class BankClient {
                 case "5":
                     System.out.println(dataInputStream.readUTF());
                     break;
-                default:
-                    System.out.println(ANSI_RED + "Invalid option." + ANSI_RESET);
-                    break;
+                // default:
+                //     System.out.println(ANSI_RED + "Invalid option." + ANSI_RESET);
+                //     break;
             }
         } else {
             System.out.println(ANSI_RED + "Authentication failed." + ANSI_RESET);
