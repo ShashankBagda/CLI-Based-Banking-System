@@ -1,0 +1,10 @@
+Account Number: 1000000000
+Name: Angel Oza
+Phone Number: 9978844231
+Address: 31, Shivan Nagar, Near Satya Sai Hospital, Kalawad Road, Rajkot
+Gmail: angeloza0605@gmail.com
+PAN Number: ABCCD237G
+Aadhar Number: 121245784125
+Balance: 500.0
+Transaction History:
+Added 500.0
