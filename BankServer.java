@@ -15,15 +15,17 @@ public class BankServer {
     public static void main(String[] args) {
         try {
             ensureCustomersDirectory();
+            @SuppressWarnings("resource")
             ServerSocket server = new ServerSocket(12345);
-            System.out.println(ANSI_PURPLE + "This is Banking Server" + ANSI_RESET);
+            System.out.println(ANSI_PURPLE + " - - - Welcome to ICT Bank - - Server Terminal - - - \n" + ANSI_RESET);
 
             while (true) {
                 Socket connectionSocket = server.accept();
+                // Socket connectionSocket = new Socket("192.168.x.x", 12345);
                 handleClient(connectionSocket);
             }
         } catch (IOException e) {
-            System.out.println("");
+            System.out.println(e);
         }
     }
 
@@ -60,38 +62,45 @@ public class BankServer {
             dataOutputStream.flush();
             String userType = dataInputStream.readUTF();
 
-            if (userType.equalsIgnoreCase("admin")) {
+            if (userType.equalsIgnoreCase("admin")) 
+            {
+                System.out.println("User Set : Admin");
                 handleAdmin(dataInputStream, dataOutputStream);
-            } else if (userType.equalsIgnoreCase("customer")) {
+            } 
+            else if (userType.equalsIgnoreCase("customer")) 
+            {
+                System.out.println("User Set : Customer");
                 handleCustomer(dataInputStream, dataOutputStream);
-            } else {
+            } 
+            else 
+            {
                 dataOutputStream.writeUTF(ANSI_RED + "Invalid option. Please restart the program." + ANSI_RESET);
+                System.out.println(ANSI_RED + "Invalid option. Please restart the program." + ANSI_RESET);
                 dataOutputStream.flush();
             }
 
         } catch (IOException e) {
-            System.out.println("");
+            System.out.println(e);
         }
     }
-
-    // private static void ensureCustomersDirectory() {
-    //     File dir = new File("Customers");
-    //     if (!dir.exists()) {
-    //         dir.mkdirs();
-    //     }
-    // }
 
     private static void handleAdmin(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeUTF(ANSI_BLUE + "Admin Options:\n1. Search Customer\n2. Create New Account\nChoose an option (1/2):" + ANSI_RESET);
         dataOutputStream.flush();
         String option = dataInputStream.readUTF();
 
-        if (option.equals("1")) {
+        if (option.equals("1")) 
+        {
+            System.out.println("Searching Customer");
             searchCustomer(dataInputStream, dataOutputStream);
-        } else if (option.equals("2")) {
+        } 
+        else if (option.equals("2")) 
+        {
+            System.out.println("Opening New Account");
             createNewAccount(dataInputStream, dataOutputStream);
         } else {
             dataOutputStream.writeUTF(ANSI_RED + "Invalid option." + ANSI_RESET);
+            System.out.println(ANSI_RED + "Invalid option." + ANSI_RESET);
             dataOutputStream.flush();
         }
     }
@@ -102,6 +111,7 @@ public class BankServer {
         
         try {
             String accountNumber = dataInputStream.readUTF();
+            System.out.println(ANSI_BLUE + "Entered Bank Account Number: " + accountNumber + ANSI_RESET);
             File accountFile = new File("Customers/" + accountNumber + ".txt");
             if (accountFile.exists()) {
                 StringBuilder accountInfo = new StringBuilder();
@@ -113,16 +123,19 @@ public class BankServer {
                 }
 
                 dataOutputStream.writeUTF(ANSI_GREEN + "Account Information:\n" + accountInfo.toString() + ANSI_RESET);
+                System.out.println(ANSI_GREEN + "Account Information:\n" + accountInfo.toString() + ANSI_RESET);
             } else {
                 dataOutputStream.writeUTF(ANSI_RED + "Bank Account not found: " + accountNumber + ANSI_RESET);
+                System.out.println(ANSI_RED + "Bank Account not found: " + accountNumber + ANSI_RESET);
             }
             dataOutputStream.flush();
             // Other reading operations
         } catch (EOFException e) {
-            System.out.println("");
-            // e.printStackTrace();
-            // Handle the exception or provide appropriate feedback to the user
+            dataOutputStream.writeUTF(ANSI_RED + "Connection closed unexpectedly. Please try again." + ANSI_RESET);
+            System.out.println(ANSI_RED + "Connection closed unexpectedly. Please try again." + ANSI_RESET);
+            dataOutputStream.flush();
         }
+        
         
 
         
@@ -172,6 +185,7 @@ public class BankServer {
         }
 
         dataOutputStream.writeUTF(ANSI_GREEN + "Account created successfully. Account Number: " + accountNumber + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "Account created successfully. Account Number: " + accountNumber + ANSI_RESET);
         dataOutputStream.flush();
     }
 
@@ -204,6 +218,7 @@ public class BankServer {
 
             if (authenticated) {
                 dataOutputStream.writeUTF(ANSI_GREEN + "Authentication successful." + ANSI_RESET);
+                System.out.println(ANSI_GREEN + "Authentication successful." + ANSI_RESET);
                 dataOutputStream.flush();
 
                 dataOutputStream.writeUTF(ANSI_BLUE + "Customer Options:\n1. Add Money\n2. Withdraw Money\n3. Transfer Money\n4. View Transaction History\n5. View Balance\nChoose an option (1-5):" + ANSI_RESET);
@@ -227,16 +242,18 @@ public class BankServer {
                         viewBalance(dataOutputStream, accountDetails);
                         break;
                     default:
-                        dataOutputStream.writeUTF(ANSI_RED + "Invalid option." + ANSI_RESET);
+                        // dataOutputStream.writeUTF(ANSI_RED + "Invalid option." + ANSI_RESET);
                         break;
                 }
                 dataOutputStream.flush();
             } else {
                 dataOutputStream.writeUTF(ANSI_RED + "Authentication failed. Please try again." + ANSI_RESET);
+                System.out.println(ANSI_RED + "Authentication failed. Please try again." + ANSI_RESET);
                 dataOutputStream.flush();
             }
         } else {
             dataOutputStream.writeUTF(ANSI_RED + "Bank Account not found." + ANSI_RESET);
+            System.out.println(ANSI_RED + "Bank Account not found." + ANSI_RESET);
             dataOutputStream.flush();
         }
     }
@@ -248,6 +265,7 @@ public class BankServer {
         double newBalance = Double.parseDouble(accountDetails.get("Balance")) + addAmount;
         updateBalance(accountNumber, newBalance, "Added " + addAmount);
         dataOutputStream.writeUTF(ANSI_GREEN + "Amount added successfully. New Balance: " + newBalance + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "Amount added successfully. New Balance: " + newBalance + ANSI_RESET);
     }
 
     private static void withdrawMoney(DataInputStream dataInputStream, DataOutputStream dataOutputStream, String accountNumber, Map<String, String> accountDetails) throws IOException {
@@ -259,8 +277,10 @@ public class BankServer {
             double newBalance = currentBalance - withdrawAmount;
             updateBalance(accountNumber, newBalance, "Withdrew " + withdrawAmount);
             dataOutputStream.writeUTF(ANSI_GREEN + "Amount withdrawn successfully. New Balance: " + newBalance + ANSI_RESET);
+            System.out.println(ANSI_GREEN + "Amount withdrawn successfully. New Balance: " + newBalance + ANSI_RESET);
         } else {
             dataOutputStream.writeUTF(ANSI_RED + "Insufficient balance." + ANSI_RESET);
+            System.out.println(ANSI_RED + "Insufficient balance." + ANSI_RESET);
         }
     }
 
@@ -285,20 +305,25 @@ public class BankServer {
                 updateBalance(receiverAccountNumber, newReceiverBalance, "Received " + transferAmount + " from Account Number : " + accountNumber);
 
                 dataOutputStream.writeUTF(ANSI_GREEN + "Amount transferred successfully. New Balance: " + newSenderBalance + ANSI_RESET);
+                System.out.println(ANSI_GREEN + "Amount transferred successfully. New Balance: " + newSenderBalance + ANSI_RESET);
             } else {
                 dataOutputStream.writeUTF(ANSI_RED + "Insufficient balance." + ANSI_RESET);
+                System.out.println(ANSI_RED + "Insufficient balance." + ANSI_RESET);
             }
         } else {
-            dataOutputStream.writeUTF(ANSI_RED + "Receiver's account not found." + ANSI_RESET);
+            dataOutputStream.writeUTF(ANSI_RED + "Receiver's account not found. Transfer Failed!" + ANSI_RESET);
+            System.out.println(ANSI_RED + "Receiver's account not found. Transfer Failed!" + ANSI_RESET);
         }
     }
 
     private static void viewTransactionHistory(DataOutputStream dataOutputStream, String accountNumber) throws IOException {
         dataOutputStream.writeUTF(ANSI_GREEN + "Transaction History:\n" + getTransactionHistory(accountNumber) + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "Transaction History:\n" + getTransactionHistory(accountNumber) + ANSI_RESET);
     }
 
     private static void viewBalance(DataOutputStream dataOutputStream, Map<String, String> accountDetails) throws IOException {
         dataOutputStream.writeUTF(ANSI_GREEN + "Your current balance: " + accountDetails.get("Balance") + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "Your current balance: " + accountDetails.get("Balance") + ANSI_RESET);
     }
 
     private static void updateBalance(String accountNumber, double newBalance, String transactionDetail) throws IOException {
