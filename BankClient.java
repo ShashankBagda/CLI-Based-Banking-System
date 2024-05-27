@@ -13,8 +13,7 @@ public class BankClient {
 
  public static void main(String[] args) {
   try (
-   Socket server = new Socket("localhost", 12345);
-   // Socket server = new Socket("192.168.x.x", 12345);
+   Socket server = new Socket("192.168.183.244", 12345);
    DataInputStream dataInputStream = new DataInputStream(server.getInputStream());
    DataOutputStream dataOutputStream = new DataOutputStream(server.getOutputStream());
    Scanner scanner = new Scanner(System.in)) {

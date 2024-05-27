@@ -21,7 +21,7 @@ public class BankServer {
 
             while (true) {
                 Socket connectionSocket = server.accept();
-                // Socket connectionSocket = new Socket("192.168.x.x", 12345);
+                //Socket connectionSocket = new Socket("192.168.183.244", 12345);
                 handleClient(connectionSocket);
             }
         } catch (IOException e) {
