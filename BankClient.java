@@ -13,12 +13,27 @@ public class BankClient {
 
  public static void main(String[] args) {
   try (
-   Socket server = new Socket("192.168.183.244", 12345);
+   Socket server = new Socket("localhost", 12345);
    DataInputStream dataInputStream = new DataInputStream(server.getInputStream());
    DataOutputStream dataOutputStream = new DataOutputStream(server.getOutputStream());
    Scanner scanner = new Scanner(System.in)) {
 
-   System.out.println(ANSI_PURPLE + " - - - Welcome to ICT Bank - - Client Terminal - - - \n" + ANSI_RESET);
+  System.out.println(ANSI_PURPLE + 
+  "    ___                         __ _              __                        ____                 __  \n" +
+  "   /   |   ____   ____ _ ___   / /( )_____       / /____ _ _   __ ____ _   / __ ) ____ _ ____   / /__\n" +
+  "  / /| |  / __ \\ / __ `// _ \\ / / |// ___/  __  / // __ `/| | / // __ `/  / __  |/ __ `// __ \\ / //_/\n" +
+  " / ___ | / / / // /_/ //  __// /   (__  )  / /_/ // /_/ / | |/ // /_/ /  / /_/ // /_/ // / / // ,<   \n" +
+  "/_/  |_|/_/ /_/ \\__, / \\___//_/   /____/   \\____/ \\__,_/  |___/ \\__,_/  /_____/ \\__,_//_/ /_//_/|_|  \n" +
+  "               /____/                                                                                \n\n" + ANSI_RESET);
+
+  System.out.println(ANSI_GREEN + 
+  "  _____  _  _               _     _____                       _                _  \n" +
+  " /  __ \\| |(_)             | |   |_   _|                     (_)              | | \n" +
+  " | /  \\/| | _   ___  _ __  | |_    | |  ___  _ __  _ __ ___   _  _ __    __ _ | | \n" +
+  " | |    | || | / _ \\| '_ \\ | __|   | | / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || | \n" +
+  " | \\__/\\| || ||  __/| | | || |_    | ||  __/| |   | | | | | || || | | || (_| || | \n" +
+  "  \\____/|_||_| \\___||_| |_| \\__|   \\_/ \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_| \n" +
+  "                                                                                  \n"+ ANSI_RESET);
 
    String userTypePrompt = dataInputStream.readUTF();
    System.out.println(userTypePrompt);

@@ -1,2 +1,2 @@
-javac *.java
+javac BankServer.java
 java BankServer

@@ -17,7 +17,22 @@ public class BankServer {
             ensureCustomersDirectory();
             @SuppressWarnings("resource")
             ServerSocket server = new ServerSocket(12345);
-            System.out.println(ANSI_PURPLE + " - - - Welcome to ICT Bank - - Server Terminal - - - \n" + ANSI_RESET);
+            System.out.println(ANSI_PURPLE + 
+  "    ___                         __ _              __                        ____                 __  \n" +
+  "   /   |   ____   ____ _ ___   / /( )_____       / /____ _ _   __ ____ _   / __ ) ____ _ ____   / /__\n" +
+  "  / /| |  / __ \\ / __ `// _ \\ / / |// ___/  __  / // __ `/| | / // __ `/  / __  |/ __ `// __ \\ / //_/\n" +
+  " / ___ | / / / // /_/ //  __// /   (__  )  / /_/ // /_/ / | |/ // /_/ /  / /_/ // /_/ // / / // ,<   \n" +
+  "/_/  |_|/_/ /_/ \\__, / \\___//_/   /____/   \\____/ \\__,_/  |___/ \\__,_/  /_____/ \\__,_//_/ /_//_/|_|  \n" +
+  "               /____/                                                                                \n\n" + ANSI_RESET);
+
+  System.out.println(ANSI_RED + 
+  "  _____                                 _____                       _                _  \n" +
+  " /  ___|                               |_   _|                     (_)              | | \n" +
+  " \\ `--.   ___  _ __ __   __ ___  _ __    | |  ___  _ __  _ __ ___   _  _ __    __ _ | | \n" +
+  "  `--. \\ / _ \\| '__|\\ \\ / // _ \\| '__|   | | / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || | \n" +
+  " /\\__/ /|  __/| |    \\ V /|  __/| |      | ||  __/| |   | | | | | || || | | || (_| || | \n" +
+  " \\____/  \\___||_|     \\_/  \\___||_|      \\_/ \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_| \n" +
+  "                                                                                        \n"+ ANSI_RESET);
 
             while (true) {
                 Socket connectionSocket = server.accept();
@@ -64,12 +79,12 @@ public class BankServer {
 
             if (userType.equalsIgnoreCase("admin")) 
             {
-                System.out.println("User Set : Admin");
+                System.out.println("\nUser Set : Admin");
                 handleAdmin(dataInputStream, dataOutputStream);
             } 
             else if (userType.equalsIgnoreCase("customer")) 
             {
-                System.out.println("User Set : Customer");
+                System.out.println("\nUser Set : Customer");
                 handleCustomer(dataInputStream, dataOutputStream);
             } 
             else 
@@ -85,7 +100,7 @@ public class BankServer {
     }
 
     private static void handleAdmin(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
-        dataOutputStream.writeUTF(ANSI_BLUE + "Admin Options:\n1. Search Customer\n2. Create New Account\nChoose an option (1/2):" + ANSI_RESET);
+        dataOutputStream.writeUTF(ANSI_BLUE + "\nAdmin Options:\n1. Search Customer\n2. Create New Account\nChoose an option (1/2):" + ANSI_RESET);
         dataOutputStream.flush();
         String option = dataInputStream.readUTF();
 
@@ -106,7 +121,7 @@ public class BankServer {
     }
 
     private static void searchCustomer(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
-        dataOutputStream.writeUTF(ANSI_BLUE + "Enter Bank Account number:" + ANSI_RESET);
+        dataOutputStream.writeUTF(ANSI_BLUE + "\nEnter Bank Account number:" + ANSI_RESET);
         dataOutputStream.flush();
         
         try {
